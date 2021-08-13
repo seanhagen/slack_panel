@@ -11,5 +11,5 @@ import (
  */
 
 func main() {
-	fmt.Println("hello world!")
+	fmt.Printf("boop!\n")
 }
