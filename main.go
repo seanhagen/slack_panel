@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 /**
@@ -11,5 +15,12 @@ import (
  */
 
 func main() {
-	fmt.Printf("boop!\n")
+	r := mux.NewRouter()
+	fs := http.FileServer(http.Dir("./static"))
+	r.PathPrefix("/").Handler(fs)
+	http.Handle("/", r)
+	fmt.Printf("Starting server on port 3000")
+	if err := http.ListenAndServe(":3000", nil); err != nil {
+		log.Panic(err)
+	}
 }
