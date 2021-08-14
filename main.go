@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/seanhagen/slack_panel/backend"
 )
 
 /**
@@ -15,12 +18,21 @@ import (
  */
 
 func main() {
-	r := mux.NewRouter()
+	hub := backend.NewHub()
+	go hub.Run()
+
+	r := mux.NewRouter().StrictSlash(true)
+
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		backend.ServeWs(hub, w, r)
+	})
+
 	fs := http.FileServer(http.Dir("./static"))
 	r.PathPrefix("/").Handler(fs)
-	http.Handle("/", r)
-	fmt.Printf("Starting server on port 3000")
-	if err := http.ListenAndServe(":3000", nil); err != nil {
+
+	fmt.Println("Starting server on port 3000")
+	l := handlers.LoggingHandler(os.Stdout, r)
+	if err := http.ListenAndServe(":3000", l); err != nil {
 		log.Panic(err)
 	}
 }

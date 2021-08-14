@@ -1,19 +1,42 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-main>
+      <router-view />
+      <p>
+        <strong>{{count}}</strong>
+      </p>
+    </v-main>
+  </v-app>
 </template>
 
-<style lang="stylus">
-#app
-  font-family Avenir, Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-  margin-top 60px
+<script lang="ts">
+import Vue from 'vue';
+import store from './store';
+
+export default Vue.extend({
+  name: 'App',
+
+  data: () => ({}),
+
+  computed: {
+    count() {
+      return store.state.count;
+    },
+  },
+
+  mounted() {
+    store.commit('reset');
+    // console.log('Starting websocket connection!');
+    // const connection = new WebSocket('ws://10.30.0.2:3000/ws');
+    // console.log('created ws: ', connection);
+    // connection.onmessage = (event) => {
+    //   console.log('got event: ', event);
+    //   store.commit('increment');
+    //   console.log('store value now: ', store.state.count);
+    // };
+  },
+});
+</script>
+
+<style>
 </style>
